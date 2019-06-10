@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WheelView">
+        <attr name="selectedTextSize" format="dimension" />
+        <attr name="normalTextSize" format="dimension" />
+        <attr name="autoAdjustTextSize" format="boolean" />
+        <attr name="normalTextColor" format="color" />
+        <attr name="selectedTextColor" format="color" />
+        <attr name="integerFormat" format="string" />
+        <attr name="decimalDigitsNumber" format="integer" />
+        <attr name="visibleItemNum" format="integer" />
+        <attr name="cyclic" format="boolean" />
+        <attr name="dividerColor" format="color" />
+        <attr name="dividerHeight" format="dimension" />
+        <attr name="selectedItemBackgroundColor" format="color" />
+        <attr name="friction" format="float" />
+        <attr name="fixSpringBack" format="boolean" />
+    </declare-styleable>
+</resources>
