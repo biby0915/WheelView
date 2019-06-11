@@ -329,6 +329,10 @@ public class WheelView<T> extends View implements Runnable {
         if (mAutoAdjustTextSize) {
             resizeTextSize(mItemHeight);
         }
+
+        if (mFroze) {
+            mScrollOffsetY = mSelectedItemPosition * mItemHeight;
+        }
     }
 
     /**
@@ -338,7 +342,7 @@ public class WheelView<T> extends View implements Runnable {
      * @param itemHeight 单个显示项高度
      */
     private void resizeTextSize(int itemHeight) {
-        if (mSelectedItemTextSize > itemHeight * 0.9f) {
+        if (mSelectedItemTextSize >= itemHeight * 0.9f) {
             mSelectedItemTextSize = itemHeight * 0.9f;
             mNormalTextSize = mSelectedItemTextSize * _normalTextSizeOrigin / _selectTextSizeOrigin;
         } else {

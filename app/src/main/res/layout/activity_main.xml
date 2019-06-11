@@ -8,14 +8,33 @@
 
     <com.zby.wheelview.WheelView
         android:id="@+id/wheel"
-        android:layout_width="200dp"
+        android:layout_width="150dp"
         android:layout_height="200dp"
-        android:layout_margin="100dp"
+        android:layout_margin="120dp"
+        app:cyclic="true"
         app:dividerColor="#e6e6e6"
         app:dividerHeight="1dp"
-        app:selectedTextSize="25sp"
-        app:normalTextSize="14sp"
         app:normalTextColor="@color/colorPrimary"
+        app:normalTextSize="14dp"
+        app:autoAdjustTextSize="true"
         app:selectedItemBackgroundColor="#f5f5f5"
-        app:selectedTextColor="@color/colorPrimaryDark" />
+        app:selectedTextColor="@color/colorPrimaryDark"
+        app:selectedTextSize="25dp"
+        app:visibleItemNum="5" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="100dp"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="50dp"
+        android:text="变形" />
 </FrameLayout>

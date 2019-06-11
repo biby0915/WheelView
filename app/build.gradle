@@ -29,5 +29,5 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:29.0.0'
 
-    api project(path: ':wheelview')
+    implementation project(path:':wheelview')
 }
