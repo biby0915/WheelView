@@ -12,6 +12,80 @@ Android wheel view.安卓滚轮组件 (选择器)，快速使用，简单接入�
 * 支持循环滚动
 * 泛型实现，自动格式化数字，降低接入成本
 
+# 如何使用
+
+root build.gradle添加以下地址
+```
+allprojects {
+    repositories {
+		...
+		maven { url 'https://www.jitpack.io' }
+	}
+}
+```
+
+添加依赖
+```
+dependencies {
+  implementation 'com.github.biby0915:WheelView:Tag'
+}
+```
+
+# 示例
+
+支持循环滚动和单列表滚动  
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/circle.gif" width ="300"/>
+
+格式化数值类型数据，使界面看起来更统一
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/format.gif" width ="300"/>
+
+滚轮的滑动速度可自由设置，数据量大的时候可以增加单次滑动划过的项目数，快速查找想要的数据。
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>
+
+设置自动调整字体字号，防止在控件尺寸变化和进行动画时文本溢出重叠，设置froze时可以保证选中项位置不变，避免位置错乱。
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/resize_pin.gif" width ="300"/>
+
+实现WheelLayer并添加到WheelView中自定义绘制内容，下图中颜色遮罩和后缀通过此方式实现  
+WheelMaskLayer和WheelSuffixLayer为内建的基本实现，具体特殊需求可自行扩展
+
+```
+wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xff00ff00, 0x00ffffff, 0xff0000ff}, new float[]{0, .5f, 1}));
+wheelView.addWheelLayer(new WheelSuffixLayer("😀",16, Color.BLACK,10));
+```
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/mix.gif" width ="300"/>
+
+WheelView支持泛型，显示自定义数据类型时，可以直接传入数据，无需进行数据组装，只要实现WheelDataSource即可  
+滚动监听时，也会返回具体的实体类
+```
+public class Pojo implements WheelDataSource {
+    private String name;
+    private String nickname;
+
+    @Override
+    public String getDisplayText() {
+        return TextUtils.isEmpty(nickname) ? name : nickname;
+    }
+}
+```
+
+```
+wheelView.setOnItemSelectedListener(new WheelView.OnItemSelectedListener<Pojo>() {
+     @Override
+     public void onItemSelected(Pojo data, int position) {
+                
+     }
+
+     @Override
+     public void onWheelSelecting(Pojo data, int position) {
+
+     }
+});
+```
 
 # LICENSE
 
