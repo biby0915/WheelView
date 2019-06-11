@@ -44,13 +44,13 @@ dependencies {
 
 滚轮的滑动速度可自由设置，数据量大的时候可以增加单次滑动划过的项目数，快速查找想要的数据。
 
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>
-
-设置自动调整字体字号，防止在控件尺寸变化和进行动画时文本溢出重叠，设置froze时可以保证选中项位置不变，避免位置错乱。
-
 ```
 wheelView.setFriction(0.02f);
 ```
+
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>
+
+设置自动调整字体字号，防止在控件尺寸变化和进行动画时文本溢出重叠，设置froze时可以保证选中项位置不变，避免位置错乱。
 
 <img src="https://github.com/biby0915/WheelView/blob/master/preview/resize_pin.gif" width ="300"/>
 
