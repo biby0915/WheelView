@@ -27,7 +27,7 @@ allprojects {
 添加依赖
 ```
 dependencies {
-  implementation 'com.github.biby0915:WheelView:Tag'
+  implementation 'com.github.biby0915:WheelView:1.0.0'
 }
 ```
 
