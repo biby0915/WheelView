@@ -42,7 +42,6 @@ public class WheelView<T> extends View implements Runnable {
     private static final int DEFAULT_NORMAL_TEXT_COLOR = Color.GRAY;
     private static final int DEFAULT_SELECTED_TEXT_COLOR = Color.BLACK;
     private static final int DEFAULT_VISIBLE_ITEM = 5;
-    private static final int DEFAULT_SCROLL_DURATION = 250;
     private static final String DEFAULT_INTEGER_FORMAT = "%d";
     private static final int DEFAULT_RESERVED_DECIMAL_DIGITS = 2;
     private static final float DEFAULT_FRICTION = 0.08f;
@@ -291,7 +290,7 @@ public class WheelView<T> extends View implements Runnable {
 
         mSelectedRectColor = ta.getColor(R.styleable.WheelView_selectedItemBackgroundColor, Color.TRANSPARENT);
         mFriction = ta.getFloat(R.styleable.WheelView_friction, DEFAULT_FRICTION);
-        mSpringBackEffect = ta.getBoolean(R.styleable.WheelView_fixSpringBack, false);
+        mSpringBackEffect = !ta.getBoolean(R.styleable.WheelView_fixSpringBack, true);
         ta.recycle();
     }
 
@@ -907,6 +906,41 @@ public class WheelView<T> extends View implements Runnable {
         invalidate();
     }
 
+    public float getNormalTextSize() {
+        return mNormalTextSize;
+    }
+
+    /**
+     * 设置未选中字体大小
+     */
+    public void setNormalTextSize(float mNormalTextSize) {
+        this.mNormalTextSize = mNormalTextSize;
+        invalidate();
+    }
+
+    public int getDecimalDigitNumber() {
+        return mDecimalDigitNumber;
+    }
+
+    /**
+     * 设置浮点数保留小数点位数
+     */
+    public void setDecimalDigitNumber(int mDecimalDigitNumber) {
+        this.mDecimalDigitNumber = mDecimalDigitNumber;
+        invalidate();
+    }
+
+    public boolean isSpringBackEffect() {
+        return mSpringBackEffect;
+    }
+
+    /**
+     * 设置快速滚动是否有回弹效果
+     */
+    public void setSpringBackEffect(boolean mSpringBackEffect) {
+        this.mSpringBackEffect = mSpringBackEffect;
+    }
+
     /**
      * 设置选中条目颜色
      *
@@ -936,6 +970,18 @@ public class WheelView<T> extends View implements Runnable {
         }
         mIntegerFormat = integerFormat;
         invalidate();
+    }
+
+    public float getFriction() {
+        return mFriction;
+    }
+
+    /**
+     * 设置摩擦系数
+     */
+    public void setFriction(float mFriction) {
+        this.mFriction = mFriction;
+        mScroller.setFriction(mFriction);
     }
 
     /**

@@ -4,19 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".MainActivity">
 
     <com.zby.wheelview.WheelView
         android:id="@+id/wheel"
         android:layout_width="150dp"
-        android:layout_height="200dp"
-        android:layout_margin="120dp"
+        android:layout_height="350dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="120dp"
+        android:background="#ffffff"
+        app:autoAdjustTextSize="true"
         app:cyclic="true"
         app:dividerColor="#e6e6e6"
         app:dividerHeight="1dp"
         app:normalTextColor="@color/colorPrimary"
         app:normalTextSize="14dp"
+        app:selectedItemBackgroundColor="#f5f5f5"
+        app:selectedTextColor="@color/colorPrimaryDark"
+        app:selectedTextSize="25dp"
+        app:visibleItemNum="5" />
+
+    <com.zby.wheelview.WheelView
+        android:id="@+id/wheel1"
+        android:layout_width="150dp"
+        android:layout_height="350dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="120dp"
+        android:background="#ffffff"
         app:autoAdjustTextSize="true"
+        app:cyclic="true"
+        app:dividerColor="#e6e6e6"
+        app:dividerHeight="1dp"
+        app:fixSpringBack="false"
+        app:normalTextColor="@color/colorPrimary"
+        app:normalTextSize="14dp"
         app:selectedItemBackgroundColor="#f5f5f5"
         app:selectedTextColor="@color/colorPrimaryDark"
         app:selectedTextSize="25dp"
@@ -28,7 +50,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="100dp"
-        android:inputType="number" />
+        android:background="@color/colorPrimary"
+        android:inputType="number"
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/button"

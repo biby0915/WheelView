@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
                 play();
             }
         });
+
+        WheelView<Integer> wheelView1 = findViewById(R.id.wheel1);
+        wheelView1.setData(list);
     }
 
     private void play() {
@@ -63,7 +67,12 @@ public class MainActivity extends AppCompatActivity {
                 wheelView.setLayoutParams(layoutParams);
 
                 if (value == height) {
-                    wheelView.setFroze(false);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            wheelView.setFroze(false);
+                        }
+                    }, 200);
                 }
             }
         });
