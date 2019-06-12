@@ -23,4 +23,5 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
 
     implementation project(path:':wheelview')
+//    implementation 'com.github.biby0915:WheelView:1.0.1'
 }
