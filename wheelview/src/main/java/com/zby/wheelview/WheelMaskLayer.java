@@ -5,8 +5,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
-
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 
 /**
  * @author ZhuBingYang
