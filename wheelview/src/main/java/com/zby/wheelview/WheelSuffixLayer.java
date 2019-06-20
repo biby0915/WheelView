@@ -16,6 +16,8 @@ public class WheelSuffixLayer implements WheelLayer {
 
     private float mTextContentMaxWidth;
 
+    private WheelView mWheelView;
+
     public WheelSuffixLayer(String suffix, float textSize, int textColor, int textPadding) {
         this.mSuffix = suffix;
         this.mTextPadding = DimensionUtil.dip2px(textPadding);
@@ -23,8 +25,19 @@ public class WheelSuffixLayer implements WheelLayer {
         this.mTextColor = textColor;
     }
 
+    public void setSuffix(String suffix) {
+        mSuffix = suffix;
+        if (mWheelView != null) {
+            mWheelView.invalidate();
+        }
+    }
+
     @Override
     public void onDraw(WheelView wheelView, Canvas canvas, Rect drawArea) {
+        if (mWheelView == null) {
+            mWheelView = wheelView;
+        }
+
         Paint paint = wheelView.getPaint();
         if (mTextContentMaxWidth == 0) {
             String s;

@@ -328,9 +328,7 @@ public class WheelView<T> extends View implements Runnable {
             resizeTextSize(mItemHeight);
         }
 
-        if (mFroze) {
-            mScrollOffsetY = mSelectedItemPosition * mItemHeight;
-        }
+        mScrollOffsetY = mSelectedItemPosition * mItemHeight;
     }
 
     /**
