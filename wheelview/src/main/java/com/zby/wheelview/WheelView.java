@@ -43,7 +43,7 @@ public class WheelView<T> extends View implements Runnable {
     private static final int DEFAULT_VISIBLE_ITEM = 5;
     private static final String DEFAULT_INTEGER_FORMAT = "%d";
     private static final int DEFAULT_RESERVED_DECIMAL_DIGITS = 2;
-    private static final float DEFAULT_FRICTION = 0.08f;
+    private static final float DEFAULT_FRICTION = 0.06f;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
