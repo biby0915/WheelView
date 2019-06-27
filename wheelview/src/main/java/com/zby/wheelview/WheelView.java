@@ -792,6 +792,10 @@ public class WheelView<T> extends View implements Runnable {
             return 0;
         }
 
+        if (mDataList.isEmpty()) {
+            return 0;
+        }
+
         int itemPosition;
         if (mScrollOffsetY < 0) {
             itemPosition = (mScrollOffsetY - mItemHeight / 2) / mItemHeight;
@@ -847,9 +851,10 @@ public class WheelView<T> extends View implements Runnable {
             return;
         }
         mScroller.forceFinished(true);
-        setBoundary();
 
         mDataList = dataList;
+        setBoundary();
+
         mCurrentScrollPosition = mSelectedItemPosition = mScrollOffsetY = 0;
 
         invalidateAndCheckItemChange();
