@@ -23,7 +23,14 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.Scroller;
 
-import java.math.BigDecimal;
+import com.zby.wheelview.extention.WheelLayer;
+import com.zby.wheelview.source.DataHolder;
+import com.zby.wheelview.source.ListDataHolder;
+import com.zby.wheelview.source.NumberDataHolder;
+import com.zby.wheelview.source.WheelDataSource;
+
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -131,12 +138,13 @@ public class WheelView<T> extends View implements Runnable {
      * 数据类型为浮点数时，保留小数位数
      */
     private int mDecimalDigitNumber;
+    private DecimalFormat mDecimalFormat;
 
     /**
      * 数据列表
      */
     @NonNull
-    private List<T> mDataList = new ArrayList<>();
+    private DataHolder<T> mDataHolder = new DataHolder.EmptyHolder<>();
 
     /**
      * 手势滚动辅助类
@@ -240,7 +248,7 @@ public class WheelView<T> extends View implements Runnable {
     /**
      * 是否打印日志
      */
-    public static boolean mEnableLog = true;
+    public static boolean mEnableLog = false;
 
     public WheelView(Context context) {
         this(context, null);
@@ -280,7 +288,7 @@ public class WheelView<T> extends View implements Runnable {
             mIntegerFormat = DEFAULT_INTEGER_FORMAT;
         }
 
-        //调整可见item为奇数
+        //调整可见item为单数
         mVisibleItemNum = adjustVisibleItemNum(ta.getInt(R.styleable.WheelView_visibleItemNum, DEFAULT_VISIBLE_ITEM));
         mIsCyclic = ta.getBoolean(R.styleable.WheelView_cyclic, false);
 
@@ -352,7 +360,7 @@ public class WheelView<T> extends View implements Runnable {
      */
     private void setBoundary() {
         mMinScrollY = mIsCyclic ? Integer.MIN_VALUE : 0;
-        mMaxScrollY = mIsCyclic ? Integer.MAX_VALUE : (mDataList.size() - 1) * mItemHeight;
+        mMaxScrollY = mIsCyclic ? Integer.MAX_VALUE : (mDataHolder.size() - 1) * mItemHeight;
     }
 
     @Override
@@ -511,7 +519,7 @@ public class WheelView<T> extends View implements Runnable {
         //item改变回调
         if (mCurrentScrollPosition != currentPosition) {
             if (mOnItemSelectedListener != null) {
-                mOnItemSelectedListener.onWheelSelecting(mDataList.get(currentPosition), currentPosition);
+                mOnItemSelectedListener.onWheelSelecting(mDataHolder.get(currentPosition), currentPosition);
             }
             //播放音效
             playSoundEffect();
@@ -682,26 +690,26 @@ public class WheelView<T> extends View implements Runnable {
      * 根据下标获取显示文字
      */
     private String getTextByIndex(int index) {
-        if (mDataList.isEmpty()) {
+        if (mDataHolder.isEmpty()) {
             Log("data is empty");
             return null;
         }
 
-        if (!mIsCyclic && (index < 0 || index >= mDataList.size())) {
+        if (!mIsCyclic && (index < 0 || index >= mDataHolder.size())) {
             return null;
         }
 
-        int i = index % mDataList.size();
+        int i = index % mDataHolder.size();
         if (i < 0) {
-            i += mDataList.size();
+            i += mDataHolder.size();
         }
-        return getItemDisplayText(mDataList.get(i));
+        return getItemDisplayText(mDataHolder.get(i));
     }
 
     /**
      * 获取滚轮项显示文字
      */
-    protected String getItemDisplayText(T item) {
+    public String getItemDisplayText(T item) {
         if (item == null) {
             return "";
         } else if (item instanceof WheelDataSource) {
@@ -709,10 +717,28 @@ public class WheelView<T> extends View implements Runnable {
         } else if (item instanceof Integer) {
             return !TextUtils.isEmpty(mIntegerFormat) ? String.format(Locale.getDefault(), mIntegerFormat, item) : String.valueOf(item);
         } else if (item instanceof Float || item instanceof Double) {
-            return String.valueOf(new BigDecimal(String.valueOf(item)).setScale(mDecimalDigitNumber, BigDecimal.ROUND_HALF_DOWN).doubleValue());
+            if (mDecimalFormat == null) {
+                initDecimalFormat();
+            }
+
+            return mDecimalFormat.format(item);
         }
 
         return item.toString();
+    }
+
+    /**
+     * 初始化浮点数格式化规则
+     */
+    private void initDecimalFormat() {
+        StringBuilder pattern = new StringBuilder("0.");
+        for (int i = 0; i < mDecimalDigitNumber; i++) {
+            pattern.append("0");
+        }
+        mDecimalFormat = new DecimalFormat(pattern.toString());
+        mDecimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+        mDecimalFormat.setGroupingSize(3);
+        mDecimalFormat.setGroupingUsed(true);
     }
 
 
@@ -731,7 +757,38 @@ public class WheelView<T> extends View implements Runnable {
     public void finishScroll() {
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
+
+            mSelectedItemPosition = (int) (mScroller.getFinalY() / mItemHeight + (mScrollOffsetY > 0 ? 0.5f : -0.5f));
+            updateAfterStop();
         }
+    }
+
+    /**
+     * 停止快速滚动
+     */
+    public void stopScroll() {
+        if (!mScroller.isFinished()) {
+            mScroller.forceFinished(true);
+
+            mSelectedItemPosition = (int) (mScrollOffsetY / mItemHeight + (mScrollOffsetY > 0 ? 0.5f : -0.5f));
+            updateAfterStop();
+        }
+    }
+
+    private void updateAfterStop() {
+        if (mSelectedItemPosition < 0) {
+            mSelectedItemPosition = mSelectedItemPosition % mDataHolder.size() + mDataHolder.size();
+        }
+
+        if (mSelectedItemPosition >= mDataHolder.size()) {
+            mSelectedItemPosition = mSelectedItemPosition % mDataHolder.size();
+        }
+
+        Log("stop position:" + mSelectedItemPosition);
+        mScrollOffsetY = mItemHeight * mSelectedItemPosition;
+
+        mIsFlingScroll = false;
+        invalidateAndCheckItemChange();
     }
 
     /**
@@ -765,7 +822,7 @@ public class WheelView<T> extends View implements Runnable {
 
             //选中监听回调
             if (mOnItemSelectedListener != null) {
-                mOnItemSelectedListener.onItemSelected(mDataList.get(mSelectedItemPosition), mSelectedItemPosition);
+                mOnItemSelectedListener.onItemSelected(mDataHolder.get(mSelectedItemPosition), mSelectedItemPosition);
             }
         }
 
@@ -792,7 +849,7 @@ public class WheelView<T> extends View implements Runnable {
             return 0;
         }
 
-        if (mDataList.isEmpty()) {
+        if (mDataHolder.isEmpty()) {
             return 0;
         }
 
@@ -802,9 +859,9 @@ public class WheelView<T> extends View implements Runnable {
         } else {
             itemPosition = (mScrollOffsetY + mItemHeight / 2) / mItemHeight;
         }
-        int currentPosition = itemPosition % mDataList.size();
+        int currentPosition = itemPosition % mDataHolder.size();
         if (currentPosition < 0) {
-            currentPosition += mDataList.size();
+            currentPosition += mDataHolder.size();
         }
 
         return currentPosition;
@@ -825,7 +882,7 @@ public class WheelView<T> extends View implements Runnable {
      * @return 当前选中的item数据
      */
     public T getSelectedItemData() {
-        return mDataList.get(mSelectedItemPosition);
+        return mDataHolder.get(mSelectedItemPosition);
     }
 
     /**
@@ -834,7 +891,7 @@ public class WheelView<T> extends View implements Runnable {
      * @return 数据列表
      */
     public List<T> getData() {
-        return mDataList;
+        return mDataHolder.toList();
     }
 
     public Paint getPaint() {
@@ -850,11 +907,31 @@ public class WheelView<T> extends View implements Runnable {
         if (dataList == null) {
             return;
         }
+        setDataSource(new ListDataHolder<>(dataList));
+
+    }
+
+    /**
+     * 设置滚轮数据，数值类型数据，每项内容根据步长和位置计算得出
+     *
+     * @param min         最小值
+     * @param max         最大值
+     * @param step        步长
+     * @param includeLast 不能整除时，是否包含最大值
+     */
+    public void setDataInRange(Number min, Number max, Number step, boolean includeLast) {
+        setDataSource((DataHolder<T>) new NumberDataHolder<>(min, max, step, includeLast));
+    }
+
+    public void setDataSource(DataHolder<T> dataSource) {
         mScroller.forceFinished(true);
+        mDataHolder = dataSource;
 
-        mDataList = dataList;
+        reset();
+    }
+
+    private void reset() {
         setBoundary();
-
         mCurrentScrollPosition = mSelectedItemPosition = mScrollOffsetY = 0;
 
         invalidateAndCheckItemChange();
@@ -1053,8 +1130,8 @@ public class WheelView<T> extends View implements Runnable {
         if (position < 0) {
             position = 0;
             Log("index not in range:" + position);
-        } else if (position > mDataList.size() - 1) {
-            position = mDataList.size() - 1;
+        } else if (position > mDataHolder.size() - 1) {
+            position = mDataHolder.size() - 1;
             Log("index not in range:" + position);
         }
 
@@ -1071,7 +1148,7 @@ public class WheelView<T> extends View implements Runnable {
         mSelectedItemPosition = position;
         //选中条目回调
         if (mOnItemSelectedListener != null) {
-            mOnItemSelectedListener.onItemSelected(mDataList.get(mSelectedItemPosition), mSelectedItemPosition);
+            mOnItemSelectedListener.onItemSelected(mDataHolder.get(mSelectedItemPosition), mSelectedItemPosition);
         }
     }
 
@@ -1079,6 +1156,14 @@ public class WheelView<T> extends View implements Runnable {
         if (mEnableLog) {
             Log.d(TAG, msg);
         }
+    }
+
+    public static boolean isEnableLog() {
+        return mEnableLog;
+    }
+
+    public static void setEnableLog(boolean enableLog) {
+        mEnableLog = enableLog;
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.zby.wheelview;
+package com.zby.wheelview.extention;
 
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.support.annotation.NonNull;
+
+import com.zby.wheelview.WheelView;
 
 /**
  * @author ZhuBingYang

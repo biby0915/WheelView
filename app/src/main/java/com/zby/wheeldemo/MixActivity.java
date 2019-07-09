@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import com.zby.wheelview.WheelMaskLayer;
-import com.zby.wheelview.WheelSuffixLayer;
+import com.zby.wheelview.extention.WheelMaskLayer;
+import com.zby.wheelview.extention.WheelSuffixLayer;
 import com.zby.wheelview.WheelView;
 
 import java.util.ArrayList;

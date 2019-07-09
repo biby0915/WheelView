@@ -25,13 +25,26 @@ public class FormatActivity extends Activity {
         for (int i = 0; i < 1000; i++) {
             list.add(i);
         }
-        integerWheelView.setData(list);
+        integerWheelView.setDataInRange(0, 100, 1, true);
 
-        WheelView<Double> wheelView = findViewById(R.id.wheel);
-        List<Double> doubleList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            doubleList.add(i + i / 123d);
-        }
-        wheelView.setData(doubleList);
+        WheelView<Float> wheelView = findViewById(R.id.wheel);
+//        List<Float> doubleList = new ArrayList<>();
+//        for (int i = 0; i < 100; i++) {
+//            doubleList.add(i + 1000 + i / 123d);d
+//        }
+        wheelView.setDataInRange(0f, 9999f, 0.01f, true);
+        wheelView.setCyclic(true);
+        wheelView.setDecimalDigitNumber(2);
+        wheelView.setOnItemSelectedListener(new WheelView.OnItemSelectedListener<Float>() {
+            @Override
+            public void onItemSelected(Float data, int position) {
+
+            }
+
+            @Override
+            public void onWheelSelecting(Float data, int position) {
+                System.out.println(data);
+            }
+        });
     }
 }

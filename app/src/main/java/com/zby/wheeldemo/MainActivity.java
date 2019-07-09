@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.zby.wheelview.WheelMaskLayer;
-import com.zby.wheelview.WheelSuffixLayer;
+import com.zby.wheelview.extention.WheelMaskLayer;
+import com.zby.wheelview.extention.WheelSuffixLayer;
 import com.zby.wheelview.WheelView;
 
 import java.util.ArrayList;

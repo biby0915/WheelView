@@ -1,7 +1,9 @@
-package com.zby.wheelview;
+package com.zby.wheelview.extention;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+
+import com.zby.wheelview.WheelView;
 
 /**
  * @author ZhuBingYang

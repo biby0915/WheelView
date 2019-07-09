@@ -1,20 +1,23 @@
-package com.zby.wheelview;
+package com.zby.wheelview.extention;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+
+import com.zby.wheelview.DimensionUtil;
+import com.zby.wheelview.WheelView;
 
 /**
  * @author ZhuBingYang
  * 在滚动文字后添加后缀文字
  */
 public class WheelSuffixLayer implements WheelLayer {
-    private String mSuffix;
-    private float mTextPadding;
-    private float mTextSize;
-    private int mTextColor;
+    public String mSuffix;
+    public float mTextPadding;
+    public float mTextSize;
+    public int mTextColor;
 
-    private float mTextContentMaxWidth;
+    public float mTextContentMaxWidth;
 
     private WheelView mWheelView;
 
@@ -34,6 +37,9 @@ public class WheelSuffixLayer implements WheelLayer {
 
     @Override
     public void onDraw(WheelView wheelView, Canvas canvas, Rect drawArea) {
+        if (mSuffix == null) {
+            return;
+        }
         if (mWheelView == null) {
             mWheelView = wheelView;
         }
