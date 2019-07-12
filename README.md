@@ -28,7 +28,7 @@ allprojects {
 app gradle
 ```
 dependencies {
-  implementation 'com.github.biby0915:WheelView:1.0.1'
+  implementation 'com.github.biby0915:WheelView:1.0.2'
 }
 ```
 
