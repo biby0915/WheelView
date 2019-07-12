@@ -1,21 +1,21 @@
 # WheelView
 Android wheel view.安卓滚轮组件 (选择器)，快速使用，简单接入自定义效果
 
-# 功能支持
+# Ability
 
-* 支持设置字体大小和颜色
+* 设置字体大小和颜色
 * 设置选中区域背景颜色，上下分割线
 * 播放滚动音效
-* 添加遮罩和文字后缀，外挂实现
-* 支持自动调整文字大小，防止文字重叠
-* 可以设置为禁止滚动，view尺寸变化时保持选中项不改变
+* 添加遮罩和文字后缀，可自定义
+* 支持自动调整文字大小
 * 滚动速率设置
-* 支持循环滚动
-* 泛型实现，自动格式化数字，降低接入成本
+* 循环滚动
+* 数值格式化显示
+* 泛型实现，降低接入成本
 
-# 如何使用
+# Usage
 
-root build.gradle添加以下地址
+root build.gradle
 ```
 allprojects {
     repositories {
@@ -25,72 +25,79 @@ allprojects {
 }
 ```
 
-添加依赖
+app gradle
 ```
 dependencies {
   implementation 'com.github.biby0915:WheelView:1.0.1'
 }
 ```
 
-# 示例
+# Snapshot
 
-支持循环滚动和单列表滚动  
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/circle.gif" width ="300"/>    <img src="https://github.com/biby0915/WheelView/blob/master/preview/format.gif" width ="300"/>
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>    <img src="https://github.com/biby0915/WheelView/blob/master/preview/resize_pin.gif" width ="300"/>
 
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/circle.gif" width ="300"/>
-
-格式化数值类型数据，使界面看起来更统一
-
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/format.gif" width ="300"/>
-
-滚轮的滑动速度可自由设置，数据量大的时候可以增加单次滑动划过的项目数，快速查找想要的数据。
-
+# Set up
 ```
-wheelView.setFriction(0.02f);
-```
+WheelView<Double> wheelView = findViewById(R.id.wheel);
 
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>
-
-设置自动调整字体字号，防止在控件尺寸变化和进行动画时文本溢出重叠，设置froze时可以保证选中项位置不变，避免位置错乱。
-
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/resize_pin.gif" width ="300"/>
-
-实现WheelLayer并添加到WheelView中自定义绘制内容，下图中颜色遮罩和后缀通过此方式实现  
-WheelMaskLayer和WheelSuffixLayer为内建的基本实现，具体特殊需求可自行扩展
-
-```
-wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xff00ff00, 0x00ffffff, 0xff0000ff}, new float[]{0, .5f, 1}));
-wheelView.addWheelLayer(new WheelSuffixLayer("😀",16, Color.BLACK,10));
-```
-
-<img src="https://github.com/biby0915/WheelView/blob/master/preview/mix.gif" width ="300"/>
-
-WheelView支持泛型，显示自定义数据类型时，可以直接传入数据，无需进行数据组装，只要实现WheelDataSource即可  
-滚动监听时，也会返回具体的实体类
-```
-public class Pojo implements WheelDataSource {
-    private String name;
-    private String nickname;
-
-    @Override
-    public String getDisplayText() {
-        return TextUtils.isEmpty(nickname) ? name : nickname;
-    }
+//1  Set up with a list
+ArrayList<Double> dataList = new ArrayList<>();
+for (double i = 0d; i < 100d; i+=0.1d) {
+    dataList.add(i);
 }
+wheelView.setData(dataList);
+
+//2  Setting Continuous Numbers and Step Length
+//   Real-time data calculation, saving memory space and speeds up loading
+wheelView.setDataInRange(0d,100d,0.1d,true);
+
+//3  Setting up custom data sources
+wheelView.setDataSource(DataHolder holder);
+
+
+//add mask
+wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xFFFFFFFF, 0x00FFFFFF, 0xFFFFFFFF}, new float[]{0, .5f, 1}));
+
+//add suffix
+wheelView.addWheelLayer(new WheelSuffixLayer("H", 12, Color.parseColor("#FF666666"), 9));
+
+//add custom implementation
+wheelView.addWheelLayer(WheelLayer layer);
 ```
 
+# Add listener
 ```
-wheelView.setOnItemSelectedListener(new WheelView.OnItemSelectedListener<Pojo>() {
-     @Override
-     public void onItemSelected(Pojo data, int position) {
-                
-     }
+wheelView.setOnItemSelectedListener(new WheelView.OnItemSelectedListener<Double>() {
+      @Override
+      public void onItemSelected(Double data, int position) {
 
-     @Override
-     public void onWheelSelecting(Pojo data, int position) {
+      }
 
-     }
+      @Override
+      public void onWheelSelecting(Double data, int position) {
+
+      }
 });
 ```
+
+# Attribute List
+| attribute | type | description |
+| ------ | ------ | ----- |
+| selectedTextSize | dimension | 选中中间项字体大小 |
+| selectedTextColor | color | 选中项字体颜色 |
+| normalTextSize | dimension | 普通项字体大小 |
+| normalTextColor | color | 普通项字体颜色 |
+| autoAdjustTextSize | dimension | 是否需要自动调整字体大小,避免字体过大时文字重叠,缩小控件尺寸时文本能正常显示 |
+| integerFormat | integer | 数据类型为整形时，显示格式(001 - 100，显示更统一) |
+| decimalDigitsNumber | integer | 数据类型为浮点型时，小数部分需要保留的位数，自动四舍五入 |
+| visibleItemNum | dimension | 一页显示的数据项数目，设置双数的时候会转换成单数 |
+| cyclic | boolean | 是否循环滚动 |
+| dividerColor | color | 分割线颜色 |
+| dividerHeight | dimension | 分割线高度 |
+| selectedItemBackgroundColor | color | 选中项背景色 |
+| friction | float | 摩擦系数，影响滚轮快速滑动时停止快慢，数值越大，停止越快，划过的项数更少 |
+| fixSpringBack | boolean | 快速滑动时是否需要回弹效果，true会修正滚动距离，最后平滑停止 |
 
 # LICENSE
 
