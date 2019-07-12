@@ -31,8 +31,8 @@ public class MixActivity extends Activity {
         }
         wheelView.setData(list);
 
-        wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xff00ff00, 0x00ffffff, 0xff0000ff}, new float[]{0, .5f, 1}));
-        wheelView.addWheelLayer(new WheelSuffixLayer("😀",16, Color.BLACK,10));
+        wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xffffff00, 0x00ffffff, 0xffffff00}, new float[]{0, .5f, 1}));
+        wheelView.addWheelLayer(new WheelSuffixLayer("℃", 16, Color.BLACK, 10));
 
     }
 }

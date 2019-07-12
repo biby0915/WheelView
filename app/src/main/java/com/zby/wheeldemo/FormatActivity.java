@@ -21,36 +21,22 @@ public class FormatActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_format);
+        setContentView(R.layout.activity_wheel);
 
-//        WheelView<Integer> integerWheelView = findViewById(R.id.integerWheel);
-//        List<Integer> list = new ArrayList<>();
-//        for (int i = 0; i < 1000; i++) {
-//            list.add(i);
-//        }
-//        integerWheelView.setDataInRange(0, 100, 1, true);
+        WheelView<Integer> integerWheelView = findViewById(R.id.wheel2);
+        integerWheelView.setDataInRange(0, 1000, 1, true);
 
-        WheelView<Float> wheelView = findViewById(R.id.wheel);
-//        List<Float> doubleList = new ArrayList<>();
-//        for (int i = 0; i < 100; i++) {
-//            doubleList.add(i + 1000 + i / 123d);d
-//        }
-        wheelView.setDataInRange(0f, 100f, 0.1f, true);
+        WheelView<Double> wheelView = findViewById(R.id.wheel);
+        List<Double> doubleList = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            doubleList.add(i * 12345 + 1000 + i / 123d);
+        }
+        wheelView.setData(doubleList);
+//        wheelView.setDataInRange(0f, 100f, 0.1f, true);
         wheelView.setCyclic(true);
 //        wheelView.setVisibleItemNum(9);
-        wheelView.setDecimalDigitNumber(2);
+//        wheelView.setDecimalDigitNumber(2);
         wheelView.addWheelLayer(new WheelSuffixLayer("%", 12, Color.BLACK, 4));
-        wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xFFF0FF0F, 0x00FFFFFF, 0xFFFFFFFF}, new float[]{0, .5f, 1}));
-        wheelView.setOnItemSelectedListener(new WheelView.OnItemSelectedListener<Float>() {
-            @Override
-            public void onItemSelected(Float data, int position) {
-
-            }
-
-            @Override
-            public void onWheelSelecting(Float data, int position) {
-                System.out.println(data);
-            }
-        });
+        wheelView.addWheelLayer(new WheelMaskLayer(new int[]{0xFFFFFFFF, 0x00FFFFFF, 0xFFFFFFFF}, new float[]{0, .5f, 1}));
     }
 }
