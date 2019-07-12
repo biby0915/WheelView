@@ -35,6 +35,7 @@ public class WheelSuffixLayer implements WheelLayer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onDraw(WheelView wheelView, Canvas canvas, Rect drawArea) {
         if (mSuffix == null) {
@@ -57,6 +58,6 @@ public class WheelSuffixLayer implements WheelLayer {
         paint.setTextSize(mTextSize);
         paint.setColor(mTextColor);
         float textBottom = Math.abs(paint.getFontMetrics().ascent + paint.getFontMetrics().descent) / 2 + drawArea.centerY();
-        canvas.drawText(mSuffix, drawArea.centerX() + mTextContentMaxWidth / 2 + mTextPadding, textBottom, paint);
+        canvas.drawText(mSuffix, drawArea.centerX() + ((wheelView.getPaddingLeft() - wheelView.getPaddingRight()) >> 1) + mTextContentMaxWidth / 2 + mTextPadding, textBottom, paint);
     }
 }

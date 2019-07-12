@@ -34,12 +34,12 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
             }
         } else if (min instanceof Float) {
             size = (int) ((max.floatValue() - min.floatValue()) / step.floatValue() + 1);
-            if (includeLast && (max.floatValue() - min.floatValue()) % step.floatValue() > (step.floatValue() / 10f)) {
+            if (includeLast && max.floatValue() > (min.floatValue() + step.floatValue() * size)) {
                 size++;
             }
         } else if (min instanceof Double) {
             size = (int) ((max.doubleValue() - min.doubleValue()) / step.doubleValue() + 1);
-            if (includeLast && (max.doubleValue() - min.doubleValue()) % step.doubleValue() > (step.doubleValue() / 10)) {
+            if (includeLast && max.doubleValue() > (min.doubleValue() + step.doubleValue() * size)) {
                 size++;
             }
         } else {
@@ -53,6 +53,7 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
         return size;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T get(int position) {
         Number v = null;
@@ -80,6 +81,7 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
         return size == 0;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<T> toList() {
         List<Number> list = new ArrayList<>();
@@ -88,7 +90,7 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
                 list.add(i);
             }
 
-            if (includeLast && max.intValue() > list.get(list.size() - 1).intValue()) {
+            if (includeLast && size > list.size()) {
                 list.add(max.intValue());
             }
         } else if (min instanceof Float) {
@@ -96,7 +98,7 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
                 list.add(i);
             }
 
-            if (includeLast && max.floatValue() > list.get(list.size() - 1).floatValue()) {
+            if (includeLast && size > list.size()) {
                 list.add(max.floatValue());
             }
         } else if (min instanceof Double) {
@@ -104,7 +106,7 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
                 list.add(i);
             }
 
-            if (includeLast && max.doubleValue() > list.get(list.size() - 1).doubleValue()) {
+            if (includeLast && size > list.size()) {
                 list.add(max.doubleValue());
             }
         }

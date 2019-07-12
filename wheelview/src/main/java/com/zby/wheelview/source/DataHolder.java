@@ -1,5 +1,7 @@
 package com.zby.wheelview.source;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,7 +36,34 @@ public interface DataHolder<T> {
 
         @Override
         public List<T> toList() {
-            return null;
+            return new ArrayList<>();
+        }
+    }
+
+    class DebugHolder<T> implements DataHolder<T> {
+        final List<String> data = Arrays.asList("Item 1", "Item 2", "Item 3", "Item 4", "Item 5",
+                "Item 6", "Item 7", "Item 8", "Item 9");
+
+        @Override
+        public int size() {
+            return data.size();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public T get(int position) {
+            return (T) data.get(position);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public List<T> toList() {
+            return (List<T>) data;
         }
     }
 }

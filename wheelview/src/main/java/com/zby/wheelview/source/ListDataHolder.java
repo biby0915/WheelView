@@ -14,7 +14,6 @@ public class ListDataHolder<T> implements DataHolder<T> {
         this.mDataList = data;
     }
 
-
     @Override
     public int size() {
         return mDataList.size();

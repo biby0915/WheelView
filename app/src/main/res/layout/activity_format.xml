@@ -9,18 +9,26 @@
 
     <com.zby.wheelview.WheelView
         android:id="@+id/wheel"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
         android:layout_margin="30dp"
         android:background="@color/white"
-        app:decimalDigitsNumber="3" />
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
+        app:cyclic="true"
+        app:decimalDigitsNumber="3"
+        app:normalTextColor="@color/colorPrimaryDark"
+        app:normalTextSize="14dp"
+        app:selectedTextColor="@color/colorAccent"
+        app:selectedTextSize="40dp"
+        app:visibleItemNum="5" />
 
 
-    <com.zby.wheelview.WheelView
-        android:id="@+id/integerWheel"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_margin="30dp"
-        android:background="@color/white"
-        app:integerFormat="%03d" />
+    <!--<com.zby.wheelview.WheelView-->
+    <!--android:id="@+id/integerWheel"-->
+    <!--android:layout_width="200dp"-->
+    <!--android:layout_height="200dp"-->
+    <!--android:layout_margin="30dp"-->
+    <!--android:background="@color/white"-->
+    <!--app:integerFormat="%03d" />-->
 </LinearLayout>

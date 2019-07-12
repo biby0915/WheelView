@@ -127,6 +127,8 @@ public class WheelView<T> extends View implements Runnable {
      */
     private Rect mDrawRect;
 
+    private Rect mOuterRect;
+
     /**
      * 数据格式为Integer时显示转换规则
      * 如固定三位数长度，不足补0 可设置为%03d
@@ -312,24 +314,82 @@ public class WheelView<T> extends View implements Runnable {
         mScroller = new Scroller(context);
         mScroller.setFriction(mFriction);
         mDrawRect = new Rect();
+        mOuterRect = new Rect();
         if (!isInEditMode()) {
             mSoundPlayer = new SoundPlayer();
+            mDataHolder = new DataHolder.EmptyHolder<>();
+        } else {
+            mDataHolder = new DataHolder.DebugHolder<>();
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        mItemHeight = Math.max(MeasureSpec.getSize(heightMeasureSpec) / mVisibleItemNum, 1);
+        setMeasuredDimension(getMeasuredWidth(getSuggestedMinimumWidth(), widthMeasureSpec),
+                getMeasuredHeight(getSuggestedMinimumHeight(), heightMeasureSpec));
     }
+
+    private int getMeasuredWidth(int size, int measureSpec) {
+        int result = size;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+                result = size;
+
+                break;
+            case MeasureSpec.AT_MOST:
+                float textWidth = 0;
+                mPaint.setTextSize(mSelectedItemTextSize);
+                List<T> list = mDataHolder.toList();
+                if (list != null) {
+                    for (int i = 0; i < list.size(); i++) {
+                        textWidth = Math.max(textWidth, mPaint.measureText(getItemDisplayText(list.get(i))));
+                    }
+                }
+
+                result = (int) Math.max(textWidth + getPaddingLeft() + getPaddingRight(), size);
+                break;
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+        }
+        return result;
+    }
+
+    private int getMeasuredHeight(int size, int measureSpec) {
+        int result = size;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+                result = size;
+                break;
+            case MeasureSpec.AT_MOST:
+                mPaint.setTextSize(mSelectedItemTextSize);
+                float textHeight = mPaint.getFontMetrics().descent - mPaint.getFontMetrics().ascent;
+
+                result = (int) Math.max(textHeight * 2 * mVisibleItemNum + getPaddingTop() + getPaddingBottom(), size);
+                break;
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+        }
+
+        mItemHeight = Math.max(MeasureSpec.getSize(result) / mVisibleItemNum, 1);
+        return result;
+    }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mItemHeight = Math.max(1, h / mVisibleItemNum);
         //设置内容可绘制区域
         mDrawRect.set(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
-
+        mOuterRect.set(0, 0, getWidth(), getHeight());
+        mItemHeight = Math.max(1, mDrawRect.height() / mVisibleItemNum);
         setBoundary();
 
         if (mAutoAdjustTextSize) {
@@ -562,7 +622,7 @@ public class WheelView<T> extends View implements Runnable {
         }
 
         for (WheelLayer layer : mWheelLayers) {
-            layer.onDraw(this, canvas, mDrawRect);
+            layer.onDraw(this, canvas, mOuterRect);
         }
     }
 
@@ -639,8 +699,11 @@ public class WheelView<T> extends View implements Runnable {
             textHeightHalf = (int) ((mPaint.getFontMetrics().descent + mPaint.getFontMetrics().ascent) / 2);
         }
 
-        int left = (int) ((getWidth() - getPaddingLeft() - getPaddingRight() - mPaint.measureText(text)) / 2);
+        int left = (int) ((getWidth() - getPaddingLeft() - getPaddingRight() - mPaint.measureText(text)) / 2 + getPaddingLeft());
+        canvas.save();
+        canvas.clipRect(mDrawRect);
         canvas.drawText(text, left, mDrawRect.centerY() + item2CenterOffsetY - textHeightHalf, mPaint);
+        canvas.restore();
     }
 
     /**
@@ -919,6 +982,7 @@ public class WheelView<T> extends View implements Runnable {
      * @param step        步长
      * @param includeLast 不能整除时，是否包含最大值
      */
+    @SuppressWarnings("unchecked")
     public void setDataInRange(Number min, Number max, Number step, boolean includeLast) {
         setDataSource((DataHolder<T>) new NumberDataHolder<>(min, max, step, includeLast));
     }
@@ -952,9 +1016,7 @@ public class WheelView<T> extends View implements Runnable {
             return;
         }
         mSelectedItemTextSize = tempTextSize;
-        if (isAutoAdjustTextSize()) {
-            requestLayout();
-        }
+        requestLayout();
         invalidate();
     }
 
