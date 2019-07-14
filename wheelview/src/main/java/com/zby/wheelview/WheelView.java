@@ -121,6 +121,8 @@ public class WheelView<T> extends View implements Runnable {
      */
     private int mSelectedRectColor;
 
+    private int mGravity;
+
     /**
      * 去掉内边距后的控件区域
      * 绘制操作区域
@@ -284,6 +286,7 @@ public class WheelView<T> extends View implements Runnable {
         mAutoAdjustTextSize = ta.getBoolean(R.styleable.WheelView_autoAdjustTextSize, false);
         mNormalTextColor = ta.getColor(R.styleable.WheelView_normalTextColor, DEFAULT_NORMAL_TEXT_COLOR);
         mSelectedItemTextColor = ta.getColor(R.styleable.WheelView_selectedTextColor, DEFAULT_SELECTED_TEXT_COLOR);
+        mGravity = ta.getInt(R.styleable.WheelView_gravity, 1);
         mDecimalDigitNumber = ta.getInt(R.styleable.WheelView_decimalDigitsNumber, DEFAULT_RESERVED_DECIMAL_DIGITS);
         mIntegerFormat = ta.getString(R.styleable.WheelView_integerFormat);
         if (TextUtils.isEmpty(mIntegerFormat)) {
@@ -699,7 +702,17 @@ public class WheelView<T> extends View implements Runnable {
             textHeightHalf = (int) ((mPaint.getFontMetrics().descent + mPaint.getFontMetrics().ascent) / 2);
         }
 
-        int left = (int) ((getWidth() - getPaddingLeft() - getPaddingRight() - mPaint.measureText(text)) / 2 + getPaddingLeft());
+        int left = mDrawRect.centerX();
+        mPaint.setTextAlign(Paint.Align.CENTER);
+
+        if (mGravity == 0) {
+            left = mDrawRect.left;
+            mPaint.setTextAlign(Paint.Align.LEFT);
+        } else if (mGravity == 2) {
+            left = mDrawRect.right;
+            mPaint.setTextAlign(Paint.Align.RIGHT);
+        }
+
         canvas.save();
         canvas.clipRect(mDrawRect);
         canvas.drawText(text, left, mDrawRect.centerY() + item2CenterOffsetY - textHeightHalf, mPaint);

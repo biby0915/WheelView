@@ -13,13 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:background="@color/white"
-        android:padding="15dp"
         app:cyclic="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="30dp"
+        android:paddingTop="100dp"
         app:decimalDigitsNumber="3"
+        app:gravity="right"
         app:normalTextColor="@color/colorPrimaryDark"
         app:normalTextSize="14dp"
         app:selectedTextColor="@color/colorAccent"
-        app:selectedTextSize="18dp"
+        app:selectedTextSize="25dp"
         app:visibleItemNum="5" />
 
 

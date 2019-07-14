@@ -36,6 +36,7 @@ dependencies {
 
 <img src="https://github.com/biby0915/WheelView/blob/master/preview/circle.gif" width ="300"/>    <img src="https://github.com/biby0915/WheelView/blob/master/preview/format.gif" width ="300"/>
 <img src="https://github.com/biby0915/WheelView/blob/master/preview/friction.gif" width ="300"/>    <img src="https://github.com/biby0915/WheelView/blob/master/preview/resize_pin.gif" width ="300"/>
+<img src="https://github.com/biby0915/WheelView/blob/master/preview/layout.gif" width ="600"/>
 
 # Set up
 ```
