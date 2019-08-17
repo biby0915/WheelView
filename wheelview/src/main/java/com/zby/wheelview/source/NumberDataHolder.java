@@ -112,4 +112,21 @@ public class NumberDataHolder<T extends Number> implements DataHolder<T> {
         }
         return (List<T>) list;
     }
+
+    @Override
+    public int indexOf(T item) {
+        if (item.doubleValue() < min.doubleValue() || item.doubleValue() > max.doubleValue()) {
+            return -1;
+        }
+
+        int probablePosition = (int) ((item.doubleValue() - min.doubleValue()) / step.doubleValue()) + 1;
+        for (int i = probablePosition - 1; i <= probablePosition + 1; i++) {
+            Number number = get(i);
+            System.out.println(number.intValue() + "  " + number.floatValue() + "  " + number.doubleValue());
+            if (Math.abs(number.doubleValue() - item.doubleValue()) < 0.0001) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

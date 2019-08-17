@@ -1196,6 +1196,10 @@ public class WheelView<T> extends View implements Runnable {
         return mSelectedItemPosition;
     }
 
+    public void setDefaultSelectItem(T item) {
+        setDefault(mDataHolder.indexOf(item));
+    }
+
     /**
      * 设置当前选中项
      *

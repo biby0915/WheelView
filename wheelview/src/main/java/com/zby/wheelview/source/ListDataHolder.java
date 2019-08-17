@@ -33,4 +33,9 @@ public class ListDataHolder<T> implements DataHolder<T> {
     public List<T> toList() {
         return mDataList;
     }
+
+    @Override
+    public int indexOf(T item) {
+        return mDataList.indexOf(item);
+    }
 }

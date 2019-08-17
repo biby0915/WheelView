@@ -17,6 +17,8 @@ public interface DataHolder<T> {
 
     List<T> toList();
 
+    int indexOf(T item);
+
     class EmptyHolder<T> implements DataHolder<T> {
 
         @Override
@@ -37,6 +39,11 @@ public interface DataHolder<T> {
         @Override
         public List<T> toList() {
             return new ArrayList<>();
+        }
+
+        @Override
+        public int indexOf(T item) {
+            return 0;
         }
     }
 
@@ -64,6 +71,11 @@ public interface DataHolder<T> {
         @Override
         public List<T> toList() {
             return (List<T>) data;
+        }
+
+        @Override
+        public int indexOf(T item) {
+            return 0;
         }
     }
 }

@@ -16,13 +16,12 @@
         app:cyclic="true"
         android:paddingLeft="20dp"
         android:paddingRight="30dp"
-        android:paddingTop="100dp"
         app:decimalDigitsNumber="3"
         app:gravity="right"
         app:normalTextColor="@color/colorPrimaryDark"
         app:normalTextSize="14dp"
         app:selectedTextColor="@color/colorAccent"
-        app:selectedTextSize="25dp"
+        app:selectedTextSize="25sp"
         app:visibleItemNum="5" />
 
 
