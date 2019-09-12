@@ -21,4 +21,8 @@
             <enum name="right" value="2" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="WheelView3D">
+        <attr name="curveRotationFactor" format="float" />
+    </declare-styleable>
 </resources>

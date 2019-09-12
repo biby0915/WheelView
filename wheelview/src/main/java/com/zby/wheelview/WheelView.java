@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 import android.support.annotation.ColorInt;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
@@ -29,6 +30,8 @@ import com.zby.wheelview.source.ListDataHolder;
 import com.zby.wheelview.source.NumberDataHolder;
 import com.zby.wheelview.source.WheelDataSource;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -50,7 +53,9 @@ public class WheelView<T> extends View implements Runnable {
     private static final int DEFAULT_VISIBLE_ITEM = 5;
     private static final String DEFAULT_INTEGER_FORMAT = "%d";
     private static final int DEFAULT_RESERVED_DECIMAL_DIGITS = 2;
-    private static final float DEFAULT_FRICTION = 0.06f;
+    private static final float DEFAULT_FRICTION = 0.015f;
+    public static final int LAYER_POSITION_TOP = 0;
+    public static final int LAYER_POSITION_BOTTOM = 1;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -127,9 +132,9 @@ public class WheelView<T> extends View implements Runnable {
      * 去掉内边距后的控件区域
      * 绘制操作区域
      */
-    private Rect mDrawRect;
+    protected Rect mDrawRect;
 
-    private Rect mOuterRect;
+    protected Rect mOuterRect;
 
     /**
      * 数据格式为Integer时显示转换规则
@@ -247,7 +252,14 @@ public class WheelView<T> extends View implements Runnable {
     /**
      * 自定义绘制图层
      */
-    private List<WheelLayer> mWheelLayers = new ArrayList<>();
+    private List<WheelLayer> mBottomLayers = new ArrayList<>();
+    private List<WheelLayer> mTopWheelLayers = new ArrayList<>();
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @IntDef({LAYER_POSITION_TOP, LAYER_POSITION_BOTTOM})
+    @interface LayerPosition {
+
+    }
 
     /**
      * 是否打印日志
@@ -477,7 +489,7 @@ public class WheelView<T> extends View implements Runnable {
                             mMinScrollY, mMaxScrollY);
 
                     if (!mSpringBackEffect) {
-                        fixBounchEffect();
+                        fixBounceEffect();
                     }
 
                 } else {
@@ -514,7 +526,7 @@ public class WheelView<T> extends View implements Runnable {
     /**
      * 修正快速滚动回弹
      */
-    private void fixBounchEffect() {
+    private void fixBounceEffect() {
         //修正快速滑动最后停止位置，没有回弹效果
         int stopOffset = mScroller.getFinalY();
         int itemScrollOffset = Math.abs(stopOffset % mItemHeight);
@@ -595,6 +607,10 @@ public class WheelView<T> extends View implements Runnable {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        for (WheelLayer mBottomLayer : mBottomLayers) {
+            mBottomLayer.onDraw(this, canvas, mDrawRect);
+        }
+
         //绘制选中区域背景色
         drawSelectedItemBackground(canvas);
         //绘制分割线
@@ -624,7 +640,7 @@ public class WheelView<T> extends View implements Runnable {
             drawItem(canvas, i, scrolledOffset);
         }
 
-        for (WheelLayer layer : mWheelLayers) {
+        for (WheelLayer layer : mTopWheelLayers) {
             layer.onDraw(this, canvas, mOuterRect);
         }
     }
@@ -666,7 +682,7 @@ public class WheelView<T> extends View implements Runnable {
      * @param index          下标
      * @param scrolledOffset 滚动偏移
      */
-    private void drawItem(Canvas canvas, int index, int scrolledOffset) {
+    protected void drawItem(Canvas canvas, int index, int scrolledOffset) {
         String text = getTextByIndex(index);
         if (text == null) {
             return;
@@ -702,12 +718,19 @@ public class WheelView<T> extends View implements Runnable {
             textHeightHalf = (int) ((mPaint.getFontMetrics().descent + mPaint.getFontMetrics().ascent) / 2);
         }
 
-        int left = mDrawRect.centerX();
         mPaint.setTextAlign(Paint.Align.CENTER);
 
+        drawItemText(canvas, text, item2CenterOffsetY, textHeightHalf);
+    }
+
+    protected void drawItemText(Canvas canvas, String text, int item2CenterOffsetY, int textHeightHalf) {
+        int left = 0;
         if (mGravity == 0) {
             left = mDrawRect.left;
             mPaint.setTextAlign(Paint.Align.LEFT);
+        } else if (mGravity == 1) {
+            left = mDrawRect.centerX();
+            mPaint.setTextAlign(Paint.Align.CENTER);
         } else if (mGravity == 2) {
             left = mDrawRect.right;
             mPaint.setTextAlign(Paint.Align.RIGHT);
@@ -1315,7 +1338,7 @@ public class WheelView<T> extends View implements Runnable {
      * 获取绘制叠加层
      */
     public List<WheelLayer> getWheelLayers() {
-        return mWheelLayers;
+        return mTopWheelLayers;
     }
 
     /**
@@ -1324,7 +1347,15 @@ public class WheelView<T> extends View implements Runnable {
      * @param layer 绘制内容实现
      */
     public void addWheelLayer(WheelLayer layer) {
-        this.mWheelLayers.add(layer);
+        addWheelLayer(layer, LAYER_POSITION_TOP);
+    }
+
+    public void addWheelLayer(WheelLayer layer, @LayerPosition int position) {
+        if (position == LAYER_POSITION_BOTTOM) {
+            mBottomLayers.add(layer);
+        } else if (position == LAYER_POSITION_TOP) {
+            mTopWheelLayers.add(layer);
+        }
     }
 
     /**
